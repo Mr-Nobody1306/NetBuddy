@@ -19,8 +19,14 @@ const recentGrid = document.getElementById("recentGrid");
 const backendHint = document.getElementById("backendHint");
 const greetEl = document.getElementById("greetEl");
 const menuBtn = document.getElementById("menuBtn");
+const sideCloseBtn = document.getElementById("sideCloseBtn");
 
 const BOT_NAME = "NetBuddy";
+
+function setNavOpen(open) {
+  document.body.classList.toggle("navOpen", open);
+  menuBtn.setAttribute("aria-expanded", String(open));
+}
 
 const ICON_PATHS = {
   chat: '<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>',
@@ -51,6 +57,7 @@ function icon(n) {
   };
   put("newChatBtn", "chat", "New chat");
   put("menuBtn", "menu", "");
+  put("sideCloseBtn", "x", "");
   put("stopBtn", "stop", "");
   put("sendBtn", "send", "Send");
   put("subnetCloseBtn", "x", "");
@@ -75,7 +82,7 @@ modeSelect.onchange = () => { localStorage.setItem("netbuddy.mode", modeSelect.v
 
 function updateHint() {
   const msg = modeSelect.value === "server"
-    ? "I am not 100% right. Says Mr Nobody lol."
+    ? "Server AI — your key stays on the server, never in this page."
     : "Offline demo — built-in networking notes, no internet needed.";
   backendHint.innerHTML = icon("lock");
   backendHint.appendChild(document.createTextNode(msg));
@@ -97,7 +104,7 @@ for (const trio of TOPICS) {
   const b = document.createElement("button");
   b.innerHTML = icon(trio[0]);
   b.appendChild(document.createTextNode(trio[1]));
-  b.onclick = () => { startChatIfNeeded(); msgInput.value = trio[2]; sendMessage(); document.body.classList.remove("navOpen"); };
+  b.onclick = () => { startChatIfNeeded(); msgInput.value = trio[2]; sendMessage(); setNavOpen(false); };
   topicsNav.appendChild(b);
 }
 const SUGGESTIONS = [["layers", "Explain OSI simply"], ["grid", "Subnet my network"], ["wifi", "Fix my WiFi"], ["award", "CCNA study plan"]];
@@ -174,7 +181,7 @@ function openChat(id) {
   for (const m of messages) addMsg(m.role === "user" ? "me" : "bot", renderMarkdown(m.content));
   showChat();
   document.getElementById("convSec").scrollIntoView({ behavior: "smooth", block: "start" });
-  document.body.classList.remove("navOpen");
+  setNavOpen(false);
 }
 function startChatIfNeeded() {
   if (currentChatId) return;
@@ -381,9 +388,13 @@ newChatBtn.onclick = () => {
   refreshPlaceholder();
   renderRecents();
   scrollEl.scrollTo({ top: 0, behavior: "smooth" });
-  document.body.classList.remove("navOpen");
+  setNavOpen(false);
 };
-menuBtn.onclick = () => document.body.classList.toggle("navOpen");
+menuBtn.onclick = () => setNavOpen(!document.body.classList.contains("navOpen"));
+sideCloseBtn.onclick = () => setNavOpen(false);
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && document.body.classList.contains("navOpen")) setNavOpen(false);
+});
 window.NetBuddyAsk = (q) => { startChatIfNeeded(); showChat(); msgInput.value = q; sendMessage(); };
 
 /* ---------------- subnet calculator ---------------- */

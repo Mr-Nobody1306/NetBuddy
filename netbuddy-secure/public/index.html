@@ -10,7 +10,10 @@
 <body>
 <div class="layout">
   <aside class="side" id="sideBar">
-    <div class="brand"><span class="orbMini" aria-hidden="true"></span> NetBuddy</div>
+    <div class="sideHead">
+      <div class="brand"><span class="orbMini" aria-hidden="true"></span> NetBuddy</div>
+      <button class="iconBtn" id="sideCloseBtn" aria-label="Close sidebar" aria-controls="sideBar"></button>
+    </div>
     <button class="newChatBtn" id="newChatBtn">New chat</button>
     <div class="searchWrap"><input id="searchInput" placeholder="Search chats" autocomplete="off" /></div>
 
@@ -23,12 +26,12 @@
     <div class="sideLabel">RECENT CHATS</div>
     <div class="recentList" id="recentList"></div>
 
-    <div class="sideFoot" id="sideFoot">I am not 100% right.<br />Says Mr Nobody lol </div>
+    <div class="sideFoot" id="sideFoot">Your API key lives on the server.<br />The browser never sees it. </div>
   </aside>
 
   <main class="stage">
     <header class="stageHead">
-      <button class="iconBtn" id="menuBtn" aria-label="Toggle sidebar"></button>
+      <button class="iconBtn" id="menuBtn" aria-label="Toggle sidebar" aria-controls="sideBar" aria-expanded="false"></button>
       <div class="headTitle">NetBuddy AI Chat</div>
       <select id="levelSelect" title="Skill level">
         <option value="beginner">Beginner</option>

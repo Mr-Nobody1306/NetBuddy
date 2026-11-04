@@ -28,6 +28,8 @@ body {
   display: flex; flex-direction: column; gap: 10px;
   position: sticky; top: 0; height: 100vh; overflow-y: auto;
 }
+.sideHead { display: flex; align-items: center; justify-content: space-between; }
+#sideCloseBtn { display: none; }
 .brand { font-size: 22px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
 .orbMini {
   width: 30px; height: 30px; border-radius: 50%;
@@ -197,6 +199,8 @@ svg.ic { width: 1em; height: 1em; vertical-align: -0.15em; margin-right: 0.45em;
 @media (max-width: 900px) {
   .side { position: fixed; z-index: 40; left: 0; top: 0; transform: translateX(-105%); transition: transform 0.25s; box-shadow: 0 0 60px rgba(40,35,90,.3); }
   body.navOpen .side { transform: none; }
-  #menuBtn { display: inline-block; }
+  #menuBtn { display: inline-block; position: relative; z-index: 41; }
+  body.navOpen #menuBtn { visibility: hidden; }
+  body.navOpen #sideCloseBtn { display: inline-flex; }
   .bubble { max-width: 92%; }
 }
