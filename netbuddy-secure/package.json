@@ -1,0 +1,14 @@
+{
+  "name": "netbuddy-secure",
+  "version": "1.1.0",
+  "private": true,
+  "description": "NetBuddy networking guide — secure split frontend/backend. API key stays on the server.",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test test/"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

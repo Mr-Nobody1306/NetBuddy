@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>NetBuddy — friendly networking guide</title>
+<link rel="stylesheet" href="styles.css" />
+<link rel="icon" type="image/png" href="favicon.png" />
+</head>
+<body>
+<div class="layout">
+  <aside class="side" id="sideBar">
+    <div class="brand"><span class="orbMini" aria-hidden="true"></span> NetBuddy</div>
+    <button class="newChatBtn" id="newChatBtn">New chat</button>
+    <div class="searchWrap"><input id="searchInput" placeholder="Search chats" autocomplete="off" /></div>
+
+    <div class="sideLabel">TOPICS</div>
+    <nav class="topicsNav" id="topicsNav"></nav>
+
+    <div class="sideLabel">TOOLS</div>
+    <button class="toolBtn" id="subnetToolBtn">Subnet calculator</button>
+
+    <div class="sideLabel">RECENT CHATS</div>
+    <div class="recentList" id="recentList"></div>
+
+    <div class="sideFoot" id="sideFoot">Your API key lives on the server.<br />The browser never sees it. </div>
+  </aside>
+
+  <main class="stage">
+    <header class="stageHead">
+      <button class="iconBtn" id="menuBtn" aria-label="Toggle sidebar"></button>
+      <div class="headTitle">NetBuddy AI Chat</div>
+      <select id="levelSelect" title="Skill level">
+        <option value="beginner">Beginner</option>
+        <option value="intermediate">Intermediate</option>
+        <option value="ccna">CCNA prep</option>
+        <option value="pro">Pro / troubleshooting</option>
+      </select>
+    </header>
+
+    <div class="scroll" id="scrollEl">
+      <section class="hero">
+        <div class="orb" aria-hidden="true"></div>
+        <h1 id="greetEl">Good Morning</h1>
+        <p class="subEl">How can I help you today?</p>
+        <div class="suggestRow" id="suggestRow"></div>
+      </section>
+
+      <div class="sideLabel scrollLabel" id="convSec">Conversation</div>
+      <div class="emptyChat" id="emptyChat">Your conversation will appear here — everything stays on one screen.</div>
+      <div class="chatCtn" id="chatCtn" aria-live="polite"></div>
+
+      <div class="sideLabel scrollLabel">Your recent chats</div>
+      <div class="recentGrid" id="recentGrid"></div>
+    </div>
+
+    <div class="composer">
+      <div class="composerBox">
+        <input id="msgInput" placeholder="Ask anything about networking…" autocomplete="off" maxlength="2000" />
+        <div class="composerRow">
+          <button class="iconBtn" id="stopBtn" hidden title="Stop"></button>
+          <select id="modeSelect" title="Answer source">
+            <option value="server">Server AI</option>
+            <option value="demo">Offline demo</option>
+          </select>
+          <span class="spacer"></span>
+          <button id="sendBtn">Send</button>
+        </div>
+      </div>
+      <div class="composerHint" id="backendHint"></div>
+    </div>
+  </main>
+</div>
+
+<div class="modalBack" id="subnetModal" hidden>
+  <div class="modal">
+    <div class="modalHead"><strong id="subnetTitle">Subnet calculator</strong><button class="iconBtn" id="subnetCloseBtn" aria-label="Close"></button></div>
+    <div class="rowFlex">
+      <input class="miniInput" id="subnetInput" value="192.168.1.0/24" />
+      <button id="subnetBtn">Calculate</button>
+    </div>
+    <div id="subnetOut"></div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
