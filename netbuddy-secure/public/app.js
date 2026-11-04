@@ -75,7 +75,7 @@ modeSelect.onchange = () => { localStorage.setItem("netbuddy.mode", modeSelect.v
 
 function updateHint() {
   const msg = modeSelect.value === "server"
-    ? "Server AI — your key stays on the server, never in this page."
+    ? "I am not 100% right. Says Mr Nobody lol."
     : "Offline demo — built-in networking notes, no internet needed.";
   backendHint.innerHTML = icon("lock");
   backendHint.appendChild(document.createTextNode(msg));
