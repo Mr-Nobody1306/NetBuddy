@@ -34,7 +34,7 @@ function loadConfig() {
 
   const cfg = {
     port: Number(process.env.PORT || 8000),
-    provider: String(process.env.AI_PROVIDER || "groq").toLowerCase(),
+    provider: String(process.env.AI_PROVIDER || "openai").toLowerCase(),
     baseUrl: String(process.env.AI_BASE_URL || "https://api.groq.com/openai/v1").replace(/\/+$/, ""),
     model: process.env.AI_MODEL || "llama-3.3-70b-versatile",
     apiKey: process.env.AI_API_KEY || "",
