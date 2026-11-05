@@ -43,6 +43,7 @@ const ICON_PATHS = {
   stop: '<rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor" stroke="none"/>',
   x: '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
   menu: '<line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>',
+  trash: '<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/>',
   lock: '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>'
 };
 function icon(n) {
@@ -130,6 +131,19 @@ function loadRecents() {
 function saveRecents(r) {
   try { localStorage.setItem("netbuddy.recents", JSON.stringify(r.slice(0, 20))); } catch (e) {}
 }
+function deleteChat(id, title) {
+  if (!window.confirm(`Delete "${title}" and all its messages? This cannot be undone.`)) return;
+  saveRecents(loadRecents().filter((chat) => chat.id !== id));
+  if (currentChatId === id) {
+    if (aborter) aborter.abort();
+    aborter = null;
+    currentChatId = null;
+    messages = [];
+    chatCtn.innerHTML = "";
+    refreshPlaceholder();
+  }
+  renderRecents();
+}
 function persistCurrent() {
   if (!messages.length) return;
   const recents = loadRecents();
@@ -151,25 +165,43 @@ function renderRecents() {
     return;
   }
   for (const r of recents) {
-    const b = document.createElement("button");
-    b.className = "recentItem";
     const d = new Date(r.ts).toLocaleDateString(undefined, { day: "numeric", month: "short" });
-    b.innerHTML = `<span></span><small></small>`;
-    b.querySelector("span").textContent = r.title;
-    b.querySelector("small").textContent = d;
-    b.onclick = () => openChat(r.id);
-    recentList.appendChild(b);
+    const listRow = document.createElement("div");
+    listRow.className = "recentRow";
+    const listOpen = document.createElement("button");
+    listOpen.className = "recentItem";
+    listOpen.innerHTML = `<span></span><small></small>`;
+    listOpen.querySelector("span").textContent = r.title;
+    listOpen.querySelector("small").textContent = d;
+    listOpen.onclick = () => openChat(r.id);
+    listRow.appendChild(listOpen);
+    listRow.appendChild(createDeleteButton(r));
+    recentList.appendChild(listRow);
 
-    const c = document.createElement("button");
-    c.className = "recentCard";
+    const card = document.createElement("div");
+    card.className = "recentCard";
     const preview = (r.messages.find(m => m.role === "assistant") || {}).content || "Networking chat";
-    c.innerHTML = `<strong></strong><span></span><small></small>`;
-    c.querySelector("strong").textContent = r.title;
-    c.querySelector("span").textContent = String(preview).slice(0, 70) + "…";
-    c.querySelector("small").textContent = d;
-    c.onclick = () => openChat(r.id);
-    recentGrid.appendChild(c);
+    const cardOpen = document.createElement("button");
+    cardOpen.className = "recentCardOpen";
+    cardOpen.innerHTML = `<strong></strong><span></span><small></small>`;
+    cardOpen.querySelector("strong").textContent = r.title;
+    cardOpen.querySelector("span").textContent = String(preview).slice(0, 70) + "…";
+    cardOpen.querySelector("small").textContent = d;
+    cardOpen.onclick = () => openChat(r.id);
+    card.appendChild(cardOpen);
+    card.appendChild(createDeleteButton(r));
+    recentGrid.appendChild(card);
   }
+}
+function createDeleteButton(chat) {
+  const button = document.createElement("button");
+  button.className = "deleteChatBtn";
+  button.type = "button";
+  button.setAttribute("aria-label", `Delete chat: ${chat.title}`);
+  button.title = "Delete chat";
+  button.innerHTML = icon("trash");
+  button.onclick = () => deleteChat(chat.id, chat.title);
+  return button;
 }
 function openChat(id) {
   const r = loadRecents().find(x => x.id === id);
@@ -402,6 +434,47 @@ const subnetModal = document.getElementById("subnetModal");
 document.getElementById("subnetToolBtn").onclick = () => { subnetModal.hidden = false; };
 document.getElementById("subnetCloseBtn").onclick = () => { subnetModal.hidden = true; };
 subnetModal.addEventListener("click", (e) => { if (e.target === subnetModal) subnetModal.hidden = true; });
+
+const numberConverterModal = document.getElementById("numberConverterModal");
+const numberConverterDirection = document.getElementById("numberConverterDirection");
+const numberConverterInput = document.getElementById("numberConverterInput");
+const numberConverterInputLabel = document.getElementById("numberConverterInputLabel");
+const numberConverterOutput = document.getElementById("numberConverterOutput");
+document.getElementById("numberConverterToolBtn").onclick = () => {
+  numberConverterModal.hidden = false;
+  numberConverterInput.focus();
+};
+document.getElementById("numberConverterCloseBtn").onclick = () => { numberConverterModal.hidden = true; };
+numberConverterModal.addEventListener("click", (e) => {
+  if (e.target === numberConverterModal) numberConverterModal.hidden = true;
+});
+numberConverterDirection.addEventListener("change", () => {
+  const isBinary = numberConverterDirection.value === "binary-to-decimal";
+  numberConverterInputLabel.textContent = isBinary ? "Binary value" : "Decimal value";
+  numberConverterInput.placeholder = isBinary ? "e.g. 1010" : "e.g. 10";
+  numberConverterOutput.textContent = "";
+});
+document.getElementById("numberConverterForm").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const value = numberConverterInput.value.trim();
+  if (!value) {
+    numberConverterOutput.textContent = "Enter a value to convert.";
+    return;
+  }
+  if (numberConverterDirection.value === "binary-to-decimal") {
+    if (!/^[01]+$/.test(value)) {
+      numberConverterOutput.textContent = "Enter a binary number using only 0 and 1.";
+      return;
+    }
+    numberConverterOutput.textContent = "Decimal: " + BigInt("0b" + value).toString(10);
+    return;
+  }
+  if (!/^\d+$/.test(value)) {
+    numberConverterOutput.textContent = "Enter a non-negative whole number.";
+    return;
+  }
+  numberConverterOutput.textContent = "Binary: " + BigInt(value).toString(2);
+});
 
 function ipToInt(ip) { return ip.split(".").reduce((a, o) => (a << 8) + parseInt(o, 10), 0) >>> 0; }
 function intToIp(n) { return [(n >>> 24) & 255, (n >>> 16) & 255, (n >>> 8) & 255, n & 255].join("."); }

@@ -22,6 +22,7 @@
 
     <div class="sideLabel">TOOLS</div>
     <button class="toolBtn" id="subnetToolBtn">Subnet calculator</button>
+    <button class="toolBtn" id="numberConverterToolBtn">Binary / decimal converter</button>
 
     <div class="sideLabel">RECENT CHATS</div>
     <div class="recentList" id="recentList"></div>
@@ -83,6 +84,25 @@
       <button id="subnetBtn">Calculate</button>
     </div>
     <div id="subnetOut"></div>
+  </div>
+</div>
+
+<div class="modalBack" id="numberConverterModal" hidden>
+  <div class="modal">
+    <div class="modalHead"><strong>Binary / decimal converter</strong><button class="iconBtn" id="numberConverterCloseBtn" aria-label="Close converter"></button></div>
+    <form id="numberConverterForm">
+      <label class="converterLabel" for="numberConverterDirection">Convert</label>
+      <select class="miniInput" id="numberConverterDirection">
+        <option value="binary-to-decimal">Binary to decimal</option>
+        <option value="decimal-to-binary">Decimal to binary</option>
+      </select>
+      <label class="converterLabel" id="numberConverterInputLabel" for="numberConverterInput">Binary value</label>
+      <div class="rowFlex">
+        <input class="miniInput" id="numberConverterInput" type="text" inputmode="numeric" autocomplete="off" maxlength="4096" placeholder="e.g. 1010" />
+        <button id="numberConverterButton" type="submit">Convert</button>
+      </div>
+    </form>
+    <p id="numberConverterOutput" aria-live="polite"></p>
   </div>
 </div>
 
